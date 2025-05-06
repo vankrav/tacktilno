@@ -19,11 +19,21 @@ const BrailleConfigurator = () => {
               3D-модель
             </div>
           </Card>
+          <TextArea  style={{ marginTop: "10px", height: "100px" }}></TextArea>
         </Col>
        
         <Col s="4" space="2">
-
-            <Card type="container" view="filled" style={{ height: "250px" }}></Card>
+        
+            <Card type="container" view="filled" style={{ height: "100%" }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              height: '100%' 
+            }}>
+              Настройки
+            </div>
+            </Card>
         </Col>
       </Row>
     </>
