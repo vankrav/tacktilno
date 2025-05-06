@@ -1,18 +1,17 @@
-'use client';
+'use client'
+import { PageConstructorProvider, PageConstructor } from '@gravity-ui/page-constructor';
 
-// import Link from 'next/link';
-// import styles from './page.module.css';
-import { Button, Col } from '@gravity-ui/uikit';
+import '@gravity-ui/page-constructor/styles/styles.scss';
 
+import navigation from '../../content/navigation/navigation-data.js';
 
-export default function Page2() {
+const TacktileModel = () => {
   return (
-    <div>
-      <h1>Страница 2</h1>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <Button href="/" view="action" size="l">Главная</Button>
-        <Button href="/page1" view="action" size="l">Страница 1</Button>
-      </div>
-    </div>
+    <PageConstructorProvider>
+      <PageConstructor navigation={navigation}/>
+      <h1>Braille</h1>
+    </PageConstructorProvider>
   );
-}
+};
+
+export default TacktileModel;

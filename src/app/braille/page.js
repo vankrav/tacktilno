@@ -1,18 +1,16 @@
-'use client';
+'use client'
+import {PageConstructor, PageConstructorProvider} from '@gravity-ui/page-constructor';
+import '@gravity-ui/page-constructor/styles/styles.scss';
 
-// import Link from 'next/link';
-// import styles from './page.module.css';
-import { Button, Col } from '@gravity-ui/uikit';
+import navigation from '../../content/navigation/navigation-data.js';
+const Braille = () => {
 
-
-export default function Page1() {
   return (
-    <div>
-      <h1>Страница 1</h1>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <Button href="/" view="action" size="l">Главная</Button>
-        <Button href="/page2" view="action" size="l">Страница 2</Button>
-      </div>
-    </div>
+    <PageConstructorProvider>
+      <PageConstructor navigation={navigation}/>
+      <h1>Braille</h1>
+    </PageConstructorProvider>
   );
-} 
+};
+
+export default Braille;
