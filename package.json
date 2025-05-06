@@ -12,10 +12,13 @@
     "@diplodoc/transform": "^4.56.0",
     "@gravity-ui/page-constructor": "^6.8.1",
     "@gravity-ui/uikit": "^7.10.0",
+    "@react-three/drei": "^10.0.7",
+    "@react-three/fiber": "^9.1.2",
     "next": "15.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sass": "^1.87.0"
+    "sass": "^1.87.0",
+    "three": "^0.176.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
