@@ -3,14 +3,8 @@ import { PageConstructorProvider, PageConstructor } from '@gravity-ui/page-const
 import '@gravity-ui/page-constructor/styles/styles.scss';
 import navigation from '../../content/navigation/navigation-data.js';
 import content from '../../content/tactile_model/tactile_model-data.js';
-import HelloWorld from '../../components/HelloWorld/HelloWorld';
+import customBlocks from '../../content/custom_blocks/custom_blocks-data.js';
 
-const customBlocks = {
-  blocks: 
-    {
-      'hello-world': HelloWorld,
-    }
-};
 
 const TactileModel = () => {
   return (

@@ -1,6 +1,8 @@
 const  content={
     blocks: [
-      
+      {
+        type: 'braille-configurator',
+      }
     ]
   };
 
