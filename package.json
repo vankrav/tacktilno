@@ -9,13 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@diplodoc/transform": "^4.56.0",
+    "@gravity-ui/page-constructor": "^6.8.1",
+    "@gravity-ui/uikit": "^7.10.0",
+    "next": "15.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.3.1"
+    "sass": "^1.87.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@gravity-ui/icons": "^2.13.0",
     "eslint": "^9",
-    "eslint-config-next": "15.3.1",
-    "@eslint/eslintrc": "^3"
+    "eslint-config-next": "15.3.1"
   }
 }
