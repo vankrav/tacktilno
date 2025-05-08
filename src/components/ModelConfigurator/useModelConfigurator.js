@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter';
 
-export const useModelConfigurator = (containerRef) => {
+export const useModelConfigurator = containerRef => {
   const [width, setWidth] = useState(100);
   const [plateThickness, setPlateThickness] = useState(5);
   const [reliefHeight, setReliefHeight] = useState(10);
@@ -30,10 +30,10 @@ export const useModelConfigurator = (containerRef) => {
     );
     camera.position.set(150, 150, 150);
 
-    const renderer = new THREE.WebGLRenderer({ 
+    const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
-      powerPreference: 'high-performance'
+      powerPreference: 'high-performance',
     });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -108,7 +108,7 @@ export const useModelConfigurator = (containerRef) => {
 
     const imgBitmap = await createImageBitmap(file);
     const canvas = document.createElement('canvas');
-    
+
     // Вычисляем новые размеры с сохранением пропорций
     let newWidth, newHeight;
     if (imgBitmap.width > imgBitmap.height) {
@@ -118,19 +118,19 @@ export const useModelConfigurator = (containerRef) => {
       newHeight = 512;
       newWidth = Math.round((imgBitmap.width * 512) / imgBitmap.height);
     }
-    
+
     // Добавляем 10 пикселей для рамки
     canvas.width = newWidth + 10;
     canvas.height = newHeight + 10;
     const ctx = canvas.getContext('2d');
-    
+
     // Заполняем весь канвас черным цветом
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
     // Рисуем масштабированное изображение с отступом 5 пикселей
     ctx.drawImage(imgBitmap, 5, 5, newWidth, newHeight);
-    
+
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
     const ratio = canvas.height / canvas.width;
@@ -253,4 +253,4 @@ export const useModelConfigurator = (containerRef) => {
     isWireframe,
     setIsWireframe,
   };
-}; 
+};

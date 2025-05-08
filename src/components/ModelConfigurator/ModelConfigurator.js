@@ -6,11 +6,14 @@ import { NumberInput } from '@gravity-ui/uikit';
 import { Text } from '@gravity-ui/uikit';
 import { Button } from '@gravity-ui/uikit';
 import { Switch } from '@gravity-ui/uikit';
+import { Slider } from '@gravity-ui/uikit';
+import { Link } from '@gravity-ui/uikit';
 import { ArrowShapeDownToLine } from '@gravity-ui/icons';
 import { Icon } from '@gravity-ui/uikit';
 import styles from './ModelConfigurator.module.scss';
 import { useRef } from 'react';
 import { useModelConfigurator } from './useModelConfigurator';
+import ArrowUpRightFromSquareIcon from '@gravity-ui/icons/svgs/arrow-up-right-from-square.svg';
 
 const ModelConfigurator = () => {
   const containerRef = useRef(null);
@@ -32,7 +35,7 @@ const ModelConfigurator = () => {
     setIsWireframe,
   } = useModelConfigurator(containerRef);
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = event => {
     const file = event.target.files[0];
     if (file) {
       setFile(file);
@@ -45,7 +48,7 @@ const ModelConfigurator = () => {
 
   return (
     <>
-      <Text variant="display-1">Конфигуратор 3D-модели</Text>
+      <Text variant="display-1" style={{ padding: '0px'}}>Конфигуратор 3D-модели</Text>
       <div className={styles.container}>
         <Row space="2">
           <Col s="8" space="2">
@@ -76,6 +79,10 @@ const ModelConfigurator = () => {
                       {file.name}
                     </Text>
                   )}
+                  <Link href="/" view="normal">
+                    Как сделать карту высот?
+                   
+                  </Link>
                 </div>
 
                 <div className={styles.settingsGroup}>
@@ -120,20 +127,21 @@ const ModelConfigurator = () => {
 
                 <div className={styles.settingsGroup}>
                   <Text variant="subheader-2">Настройки сетки</Text>
-                  <NumberInput
-                    label="Разрешение сетки:"
-                    placeholder="Введите разрешение"
-                    min={10}
-                    max={512}
-                    value={gridResolution}
-                    onUpdate={setGridResolution}
-                  />
+                  <div className={styles.sliderContainer}>
+                    <Text variant="body-2">Разрешение сетки: {gridResolution}</Text>
+                    <Slider
+                      value={gridResolution}
+                      onUpdate={setGridResolution}
+                      min={10}
+                      max={512}
+                      step={1}
+                      tooltipDisplay="on"
+                      marks={[10, 100, 200, 300, 400, 512]}
+                    />
+                  </div>
                   <div className={styles.switchContainer}>
                     <Text variant="body-2">Wireframe режим</Text>
-                    <Switch
-                      checked={isWireframe}
-                      onUpdate={setIsWireframe}
-                    />
+                    <Switch checked={isWireframe} onUpdate={setIsWireframe} />
                   </div>
                 </div>
 
