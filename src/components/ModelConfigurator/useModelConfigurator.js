@@ -9,6 +9,8 @@ export const useModelConfigurator = (containerRef) => {
   const [reliefHeight, setReliefHeight] = useState(10);
   const [file, setFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(1);
+  const [gridResolution, setGridResolution] = useState(100);
+  const [isWireframe, setIsWireframe] = useState(false);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
@@ -99,37 +101,56 @@ export const useModelConfigurator = (containerRef) => {
     if (file) {
       generateModel();
     }
-  }, [width, plateThickness, reliefHeight, file]);
+  }, [width, plateThickness, reliefHeight, file, gridResolution]);
 
   const generateModel = async () => {
     if (!file) return;
 
     const imgBitmap = await createImageBitmap(file);
     const canvas = document.createElement('canvas');
-    canvas.width = imgBitmap.width + 10;
-    canvas.height = imgBitmap.height + 10;
+    
+    // Вычисляем новые размеры с сохранением пропорций
+    let newWidth, newHeight;
+    if (imgBitmap.width > imgBitmap.height) {
+      newWidth = 512;
+      newHeight = Math.round((imgBitmap.height * 512) / imgBitmap.width);
+    } else {
+      newHeight = 512;
+      newWidth = Math.round((imgBitmap.width * 512) / imgBitmap.height);
+    }
+    
+    // Добавляем 10 пикселей для рамки
+    canvas.width = newWidth + 10;
+    canvas.height = newHeight + 10;
     const ctx = canvas.getContext('2d');
     
+    // Заполняем весь канвас черным цветом
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    ctx.drawImage(imgBitmap, 5, 5);
+    // Рисуем масштабированное изображение с отступом 5 пикселей
+    ctx.drawImage(imgBitmap, 5, 5, newWidth, newHeight);
     
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
     const ratio = canvas.height / canvas.width;
     setAspectRatio(ratio);
 
-    const cols = canvas.width;
-    const rows = canvas.height;
+    // Используем разрешение сетки для создания геометрии
+    const cols = Math.min(gridResolution, canvas.width);
+    const rows = Math.round(cols * ratio);
     const positions = [];
     const indices = [];
 
     const depth = width * ratio;
 
+    // Создаем сетку с заданным разрешением
     for (let j = 0; j < rows; j++) {
       for (let i = 0; i < cols; i++) {
-        const idx = (j * cols + i) * 4;
+        // Вычисляем соответствующие координаты в исходном изображении
+        const srcX = Math.floor((i / (cols - 1)) * canvas.width);
+        const srcY = Math.floor((j / (rows - 1)) * canvas.height);
+        const idx = (srcY * canvas.width + srcX) * 4;
         const brightness = imgData[idx];
         const h = (brightness / 255) * reliefHeight;
         const x = (i / (cols - 1) - 0.5) * width;
@@ -158,12 +179,14 @@ export const useModelConfigurator = (containerRef) => {
       metalness: 0.3,
       roughness: 0.4,
       side: THREE.DoubleSide,
+      wireframe: isWireframe,
     });
 
     const plateMaterial = new THREE.MeshStandardMaterial({
       color: 0xffd700,
       metalness: 0.2,
       roughness: 0.5,
+      wireframe: isWireframe,
     });
 
     const reliefMesh = new THREE.Mesh(reliefGeo, reliefMaterial);
@@ -185,6 +208,15 @@ export const useModelConfigurator = (containerRef) => {
     scene.add(group);
     groupRef.current = group;
   };
+
+  // Обновляем модель при изменении wireframe режима
+  useEffect(() => {
+    if (groupRef.current) {
+      groupRef.current.children.forEach(mesh => {
+        mesh.material.wireframe = isWireframe;
+      });
+    }
+  }, [isWireframe]);
 
   const exportSTL = () => {
     const group = groupRef.current;
@@ -216,5 +248,9 @@ export const useModelConfigurator = (containerRef) => {
     setFile,
     exportSTL,
     aspectRatio,
+    gridResolution,
+    setGridResolution,
+    isWireframe,
+    setIsWireframe,
   };
 }; 

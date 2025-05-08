@@ -5,6 +5,7 @@ import { TextArea } from '@gravity-ui/uikit';
 import { NumberInput } from '@gravity-ui/uikit';
 import { Text } from '@gravity-ui/uikit';
 import { Button } from '@gravity-ui/uikit';
+import { Switch } from '@gravity-ui/uikit';
 import { ArrowShapeDownToLine } from '@gravity-ui/icons';
 import { Icon } from '@gravity-ui/uikit';
 import styles from './ModelConfigurator.module.scss';
@@ -25,6 +26,10 @@ const ModelConfigurator = () => {
     setFile,
     exportSTL,
     aspectRatio,
+    gridResolution,
+    setGridResolution,
+    isWireframe,
+    setIsWireframe,
   } = useModelConfigurator(containerRef);
 
   const handleImageUpload = (event) => {
@@ -111,6 +116,25 @@ const ModelConfigurator = () => {
                     value={reliefHeight}
                     onUpdate={setReliefHeight}
                   />
+                </div>
+
+                <div className={styles.settingsGroup}>
+                  <Text variant="subheader-2">Настройки сетки</Text>
+                  <NumberInput
+                    label="Разрешение сетки:"
+                    placeholder="Введите разрешение"
+                    min={10}
+                    max={512}
+                    value={gridResolution}
+                    onUpdate={setGridResolution}
+                  />
+                  <div className={styles.switchContainer}>
+                    <Text variant="body-2">Wireframe режим</Text>
+                    <Switch
+                      checked={isWireframe}
+                      onUpdate={setIsWireframe}
+                    />
+                  </div>
                 </div>
 
                 <div className={styles.exportButton}>

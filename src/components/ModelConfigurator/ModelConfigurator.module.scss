@@ -1,11 +1,9 @@
 .container {
-  margin-top: 20px;
+  padding: 20px;
 }
 
 .modelContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
   height: 100%;
   border-radius: 8px;
   overflow: hidden;
@@ -18,11 +16,10 @@
 }
 
 .settingsContainer {
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: 100%;
   border-radius: 8px;
 }
 
@@ -33,11 +30,24 @@
 }
 
 .fileName {
+  margin-top: 5px;
   word-break: break-all;
-  text-align: center;
-  margin-top: 4px;
 }
 
 .exportButton {
   margin-top: auto;
+}
+
+.switchContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 5px;
 } 
