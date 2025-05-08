@@ -1,5 +1,5 @@
 // src/components/CubeGenerator/CubeGenerator.tsx
-'use client'
+'use client';
 import React, { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
@@ -8,7 +8,7 @@ import { STLExporter } from 'three/examples/jsm/exporters/STLExporter';
 
 function Box(props) {
   const { width = 1, height = 1, depth = 1 } = props;
-  
+
   return (
     <mesh>
       <boxGeometry args={[width, height, depth]} />
@@ -21,23 +21,23 @@ function CubeGenerator() {
   const [dimensions, setDimensions] = useState({
     width: 1,
     height: 1,
-    depth: 1
+    depth: 1,
   });
-  
+
   const handleExport = () => {
     const exporter = new STLExporter();
     const scene = sceneRef.current;
-    
+
     if (scene) {
       const result = exporter.parse(scene, { binary: true });
       const blob = new Blob([result], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(blob);
-      
+
       const link = document.createElement('a');
       link.href = url;
       link.download = 'cube.stl';
       link.click();
-      
+
       URL.revokeObjectURL(url);
     }
   };
@@ -52,7 +52,7 @@ function CubeGenerator() {
           <OrbitControls />
         </Canvas>
       </div>
-      
+
       <div className="cube-generator__controls">
         <div className="cube-generator__control">
           <label>Ширина (мм):</label>
@@ -63,7 +63,7 @@ function CubeGenerator() {
             onChange={([value]) => setDimensions(prev => ({ ...prev, width: value }))}
           />
         </div>
-        
+
         <div className="cube-generator__control">
           <label>Высота (мм):</label>
           <Slider
@@ -73,7 +73,7 @@ function CubeGenerator() {
             onChange={([value]) => setDimensions(prev => ({ ...prev, height: value }))}
           />
         </div>
-        
+
         <div className="cube-generator__control">
           <label>Глубина (мм):</label>
           <Slider
@@ -83,7 +83,7 @@ function CubeGenerator() {
             onChange={([value]) => setDimensions(prev => ({ ...prev, depth: value }))}
           />
         </div>
-        
+
         <Button view="action" onClick={handleExport}>
           Экспорт STL
         </Button>

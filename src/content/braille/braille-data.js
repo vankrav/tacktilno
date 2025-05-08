@@ -1,9 +1,9 @@
-const  content={
-    blocks: [
-      {
-        type: 'braille-configurator',
-      }
-    ]
-  };
+const content = {
+  blocks: [
+    {
+      type: 'braille-configurator',
+    },
+  ],
+};
 
-  export default content;
+export default content;

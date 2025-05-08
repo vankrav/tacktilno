@@ -1,12 +1,9 @@
-const  content={
-    blocks: [
-      {
-        type: 'hello-world',
-      },
-      {
-        type: 'cube-generator',
-      }
-    ]
-  };
+const content = {
+  blocks: [
+    {
+      type: 'model-configurator',
+    },
+  ],
+};
 
-  export default content;
+export default content;

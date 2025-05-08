@@ -5,10 +5,13 @@ import { TextArea } from '@gravity-ui/uikit';
 import { NumberInput } from '@gravity-ui/uikit';
 import { Text } from '@gravity-ui/uikit';
 import { Button } from '@gravity-ui/uikit';
-const BrailleConfigurator = () => {
+import { ArrowShapeDownToLine } from '@gravity-ui/icons';
+import { Icon } from '@gravity-ui/uikit';
+
+const ModelConfigurator = () => {
   return (
     <>
-      <Text variant="display-1">Конфигуратор шрифта Брайля</Text>
+      <Text variant="display-1">Конфигуратор 3D-модели</Text>
       <div style={{ marginTop: '20px' }}>
         <Row space="2">
           <Col s="8" space="2">
@@ -24,17 +27,10 @@ const BrailleConfigurator = () => {
                 3D-модель
               </div>
             </Card>
-            <div style={{ marginTop: '10px' }}>
-              <Text variant="header-1">Введите текст:</Text>
-              <TextArea
-                placeholder="Введите текст"
-                style={{ marginTop: '10px', height: '100px' }}
-              ></TextArea>
-            </div>
           </Col>
 
           <Col s="4" space="2">
-            <Card type="container" view="filled" style={{ height: '100%' }}>
+            <Card type="container" view="outlined" style={{ height: '100%' }}>
               <div
                 style={{
                   padding: '24px',
@@ -45,9 +41,16 @@ const BrailleConfigurator = () => {
                 }}
               >
                 <Text variant="header-1">Настройки</Text>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <Text variant="subheader-2">Карта высот</Text>
+                  <Button size="l" view="normal" width="max">
+                    <Icon data={ArrowShapeDownToLine} size={18} />
+                    Загрузить изображение
+                  </Button>
+                </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <Text variant="subheader-2">Размеры</Text>
+                  <Text variant="subheader-2">Размеры пластины</Text>
                   <NumberInput
                     label="Ширина (мм):"
                     placeholder="Введите ширину"
@@ -72,17 +75,10 @@ const BrailleConfigurator = () => {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <Text variant="subheader-2">Отступы</Text>
+                  <Text variant="subheader-2">Высота рельефа</Text>
                   <NumberInput
-                    label="Отступ сверху (мм):"
-                    placeholder="Введите отступ сверху"
-                    min={10}
-                    max={3000}
-                    defaultValue={10}
-                  />
-                  <NumberInput
-                    label="Отступ слева (мм):"
-                    placeholder="Введите отступ слева"
+                    label="Высота рельефа (мм):"
+                    placeholder="Введите высоту рельефа"
                     min={10}
                     max={3000}
                     defaultValue={10}
@@ -103,4 +99,4 @@ const BrailleConfigurator = () => {
   );
 };
 
-export default BrailleConfigurator;
+export default ModelConfigurator;
