@@ -8,10 +8,11 @@ import { Button } from "@gravity-ui/uikit";
 const BrailleConfigurator = () => {
   return (
     <>
-      <h1>Конфигуратор шрифта Брайля</h1>
+      <Text variant="display-1">Конфигуратор шрифта Брайля</Text>
+      <div style={{ marginTop: "20px" }}>
       <Row space="2">
         <Col s="8"  space="2">
-          <Card type="container" view="filled" style={{ height: "500px" }}>
+          <Card type="container" view="filled" style={{ height: "500px"}}>
             <div style={{ 
               display: 'flex', 
               justifyContent: 'center', 
@@ -21,11 +22,14 @@ const BrailleConfigurator = () => {
               3D-модель
             </div>
           </Card>
-          <TextArea placeholder="Введите текст" style={{ marginTop: "10px", height: "100px" }}></TextArea>
+          <div style={{ marginTop: "10px" }}>
+            <Text variant="header-1">Введите текст:</Text>
+            <TextArea placeholder="Введите текст" style={{ marginTop: "10px", height: "100px" }}></TextArea>
+          </div>
         </Col>
        
         <Col s="4" space="2">
-            <Card type="container" view="filled" style={{ height: "100%" }}>
+            <Card type="container" view="filled" style={{ height: "100%"}}>
               <div style={{ 
                 padding: "24px",
                 display: "flex",
@@ -37,24 +41,25 @@ const BrailleConfigurator = () => {
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   <Text variant="subheader-2">Размеры</Text>
-                  <NumberInput label="Ширина (мм):" placeholder="Введите ширину" min={10} max={3000} /> 
-                  <NumberInput label="Высота (мм):" placeholder="Введите высоту" min={10} max={3000} /> 
-                  <NumberInput label="Толщина (мм):" placeholder="Введите толщину" min={10} max={3000} /> 
+                  <NumberInput label="Ширина (мм):" placeholder="Введите ширину" min={10} max={3000} defaultValue={100} /> 
+                  <NumberInput label="Высота (мм):" placeholder="Введите высоту" min={10} max={3000} defaultValue={100} /> 
+                  <NumberInput label="Толщина (мм):" placeholder="Введите толщину" min={10} max={3000} defaultValue={3} /> 
                 </div>
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   <Text variant="subheader-2">Отступы</Text>
-                  <NumberInput label="Отступ сверху (мм):" placeholder="Введите отступ сверху" min={10} max={3000} /> 
-                  <NumberInput label="Отступ сбоку (мм):" placeholder="Введите отступ сбоку" min={10} max={3000} /> 
+                  <NumberInput label="Отступ сверху (мм):" placeholder="Введите отступ сверху" min={10} max={3000} defaultValue={10} /> 
+                  <NumberInput label="Отступ слева (мм):" placeholder="Введите отступ слева" min={10} max={3000} defaultValue={10} /> 
                 </div>
 
                 <div style={{ marginTop: "auto" }}>
-                  <Button size="xl" view="action" width="max">Экспорт модели</Button>
+                  <Button size="xl" view="action" width="max">Экспорт 3D-модели</Button>
                 </div>
               </div>
             </Card>
         </Col>
       </Row>
+      </div>
     </>
   );
 };
