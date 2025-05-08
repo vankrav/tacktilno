@@ -7,86 +7,114 @@ import { Text } from '@gravity-ui/uikit';
 import { Button } from '@gravity-ui/uikit';
 import { ArrowShapeDownToLine } from '@gravity-ui/icons';
 import { Icon } from '@gravity-ui/uikit';
+import styles from './ModelConfigurator.module.scss';
+import { useRef } from 'react';
+import { useModelConfigurator } from './useModelConfigurator';
 
 const ModelConfigurator = () => {
+  const containerRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const {
+    width,
+    setWidth,
+    plateThickness,
+    setPlateThickness,
+    reliefHeight,
+    setReliefHeight,
+    file,
+    setFile,
+    exportSTL,
+    aspectRatio,
+  } = useModelConfigurator(containerRef);
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFile(file);
+    }
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <>
       <Text variant="display-1">Конфигуратор 3D-модели</Text>
-      <div style={{ marginTop: '20px' }}>
+      <div className={styles.container}>
         <Row space="2">
           <Col s="8" space="2">
-            <Card type="container" view="filled" style={{ height: '500px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                }}
-              >
-                3D-модель
-              </div>
+            <Card type="container" view="outlined" style={{ height: '500px' }}>
+              <div ref={containerRef} className={styles.modelContainer} />
             </Card>
           </Col>
 
           <Col s="4" space="2">
             <Card type="container" view="outlined" style={{ height: '100%' }}>
-              <div
-                style={{
-                  padding: '24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '20px',
-                  height: '100%',
-                }}
-              >
+              <div className={styles.settingsContainer}>
                 <Text variant="header-1">Настройки</Text>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div className={styles.settingsGroup}>
                   <Text variant="subheader-2">Карта высот</Text>
-                  <Button size="l" view="normal" width="max">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                  />
+                  <Button size="l" view="normal" width="max" onClick={handleButtonClick}>
                     <Icon data={ArrowShapeDownToLine} size={18} />
                     Загрузить изображение
                   </Button>
+                  {file && (
+                    <Text variant="body-2" color="secondary" className={styles.fileName}>
+                      {file.name}
+                    </Text>
+                  )}
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div className={styles.settingsGroup}>
                   <Text variant="subheader-2">Размеры пластины</Text>
                   <NumberInput
                     label="Ширина (мм):"
                     placeholder="Введите ширину"
                     min={10}
                     max={3000}
-                    defaultValue={100}
+                    value={width}
+                    onUpdate={setWidth}
                   />
                   <NumberInput
                     label="Высота (мм):"
-                    placeholder="Введите высоту"
+                    placeholder="Автоматически"
                     min={10}
                     max={3000}
-                    defaultValue={100}
+                    value={Math.round(width * aspectRatio)}
+                    disabled
                   />
                   <NumberInput
                     label="Толщина (мм):"
                     placeholder="Введите толщину"
-                    min={10}
+                    min={1}
                     max={3000}
-                    defaultValue={3}
+                    value={plateThickness}
+                    onUpdate={setPlateThickness}
                   />
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div className={styles.settingsGroup}>
                   <Text variant="subheader-2">Высота рельефа</Text>
                   <NumberInput
                     label="Высота рельефа (мм):"
                     placeholder="Введите высоту рельефа"
-                    min={10}
+                    min={0}
                     max={3000}
-                    defaultValue={10}
+                    value={reliefHeight}
+                    onUpdate={setReliefHeight}
                   />
                 </div>
 
-                <div style={{ marginTop: 'auto' }}>
-                  <Button size="xl" view="action" width="max">
+                <div className={styles.exportButton}>
+                  <Button size="xl" view="action" width="max" onClick={exportSTL}>
                     Экспорт 3D-модели
                   </Button>
                 </div>
