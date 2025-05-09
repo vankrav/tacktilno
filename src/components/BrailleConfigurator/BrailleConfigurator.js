@@ -5,92 +5,139 @@ import { TextArea } from '@gravity-ui/uikit';
 import { NumberInput } from '@gravity-ui/uikit';
 import { Text } from '@gravity-ui/uikit';
 import { Button } from '@gravity-ui/uikit';
+import { Switch } from '@gravity-ui/uikit';
+import { Slider } from '@gravity-ui/uikit';
+import styles from './BrailleConfigurator.module.scss';
+import { useRef } from 'react';
+import { useBrailleConfigurator } from './useBrailleConfigurator';
+
 const BrailleConfigurator = () => {
+  const containerRef = useRef(null);
+  const {
+    text,
+    setText,
+    width,
+    setWidth,
+    height,
+    setHeight,
+    plateThickness,
+    setPlateThickness,
+    marginTop,
+    setMarginTop,
+    marginLeft,
+    setMarginLeft,
+    gridResolution,
+    setGridResolution,
+    isWireframe,
+    setIsWireframe,
+    exportSTL,
+    canvas,
+  } = useBrailleConfigurator(containerRef);
+
   return (
     <>
-      <Text variant="display-1">Конфигуратор шрифта Брайля</Text>
-      <div style={{ marginTop: '20px' }}>
+      <Text variant="display-1" style={{ padding: '0px'}}>Конфигуратор шрифта Брайля</Text>
+      <div className={styles.container}>
         <Row space="2">
           <Col s="8" space="2">
-            <Card type="container" view="filled" style={{ height: '500px' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                }}
-              >
-                3D-модель
-              </div>
+            <Card type="container" view="outlined" style={{ height: '500px' }}>
+              <div ref={containerRef} className={styles.modelContainer} />
             </Card>
-            <div style={{ marginTop: '10px' }}>
-              <Text variant="header-1">Введите текст:</Text>
-              <TextArea
-                placeholder="Введите текст"
-                style={{ marginTop: '10px', height: '100px' }}
-              ></TextArea>
-            </div>
+            {/* {canvas && (
+              <div className={styles.canvasContainer}>
+                <Text variant="subheader-2">Предпросмотр изображения:</Text>
+                <div className={styles.canvasWrapper}>
+                  <img src={canvas.toDataURL()} alt="Предпросмотр" />
+                </div>
+              </div>
+            )} */}
           </Col>
 
           <Col s="4" space="2">
-            <Card type="container" view="filled" style={{ height: '100%' }}>
-              <div
-                style={{
-                  padding: '24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '20px',
-                  height: '100%',
-                }}
-              >
+            <Card type="container" view="outlined" style={{ height: '100%' }}>
+              <div className={styles.settingsContainer}>
                 <Text variant="header-1">Настройки</Text>
+                <div className={styles.settingsGroup}>
+                  <Text variant="subheader-2">Текст</Text>
+                  <TextArea
+                    value={text}
+                    onUpdate={setText}
+                    placeholder="Введите текст"
+                    minRows={3}
+                    maxRows={6}
+                  />
+                </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <Text variant="subheader-2">Размеры</Text>
+                <div className={styles.settingsGroup}>
+                  <Text variant="subheader-2">Размеры пластины</Text>
                   <NumberInput
                     label="Ширина (мм):"
                     placeholder="Введите ширину"
                     min={10}
                     max={3000}
-                    defaultValue={100}
+                    value={width}
+                    onUpdate={setWidth}
                   />
                   <NumberInput
                     label="Высота (мм):"
                     placeholder="Введите высоту"
                     min={10}
                     max={3000}
-                    defaultValue={100}
+                    value={height}
+                    onUpdate={setHeight}
                   />
                   <NumberInput
                     label="Толщина (мм):"
                     placeholder="Введите толщину"
-                    min={10}
+                    min={1}
                     max={3000}
-                    defaultValue={3}
+                    value={plateThickness}
+                    onUpdate={setPlateThickness}
                   />
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div className={styles.settingsGroup}>
                   <Text variant="subheader-2">Отступы</Text>
                   <NumberInput
                     label="Отступ сверху (мм):"
-                    placeholder="Введите отступ сверху"
-                    min={10}
-                    max={3000}
-                    defaultValue={10}
+                    placeholder="Введите отступ"
+                    min={0}
+                    max={100}
+                    value={marginTop}
+                    onUpdate={setMarginTop}
                   />
                   <NumberInput
                     label="Отступ слева (мм):"
-                    placeholder="Введите отступ слева"
-                    min={10}
-                    max={3000}
-                    defaultValue={10}
+                    placeholder="Введите отступ"
+                    min={0}
+                    max={100}
+                    value={marginLeft}
+                    onUpdate={setMarginLeft}
                   />
                 </div>
 
-                <div style={{ marginTop: 'auto' }}>
-                  <Button size="xl" view="action" width="max">
+                <div className={styles.settingsGroup}>
+                  <Text variant="subheader-2">Настройки сетки</Text>
+                  <div className={styles.sliderContainer}>
+                    <Text variant="body-2">Разрешение сетки: {gridResolution}</Text>
+                    <Slider
+                      value={gridResolution}
+                      onUpdate={setGridResolution}
+                      min={10}
+                      max={512}
+                      step={1}
+                      tooltipDisplay="on"
+                      marks={[10, 100, 200, 300, 400, 512]}
+                    />
+                  </div>
+                  <div className={styles.switchContainer}>
+                    <Text variant="body-2">Wireframe режим</Text>
+                    <Switch checked={isWireframe} onUpdate={setIsWireframe} />
+                  </div>
+                </div>
+
+                <div className={styles.exportButton}>
+                  <Button size="xl" view="action" width="max" onClick={exportSTL}>
                     Экспорт 3D-модели
                   </Button>
                 </div>

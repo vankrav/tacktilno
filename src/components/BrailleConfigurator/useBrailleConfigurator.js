@@ -2,15 +2,23 @@ import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter';
+import codes from '../../scripts/codes';
 
-export const useModelConfigurator = containerRef => {
+const DPI = 150;
+const MM_TO_INCH = 25.4;
+const DOT_HEIGHT = 1; // Константа высоты точки в мм
+
+export const useBrailleConfigurator = containerRef => {
+  const [text, setText] = useState('привет, мир');
   const [width, setWidth] = useState(100);
-  const [plateThickness, setPlateThickness] = useState(5);
-  const [reliefHeight, setReliefHeight] = useState(10);
-  const [file, setFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(1);
-  const [gridResolution, setGridResolution] = useState(100);
+  const [height, setHeight] = useState(25);
+  const [plateThickness, setPlateThickness] = useState(3);
+  const [marginTop, setMarginTop] = useState(10);
+  const [marginLeft, setMarginLeft] = useState(10);
+  const [gridResolution, setGridResolution] = useState(200);
   const [isWireframe, setIsWireframe] = useState(false);
+  const [canvas, setCanvas] = useState(null);
+
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
@@ -98,64 +106,121 @@ export const useModelConfigurator = containerRef => {
   }, []);
 
   useEffect(() => {
-    if (file) {
+    if (text) {
       generateModel();
     }
-  }, [width, plateThickness, reliefHeight, file, gridResolution]);
+  }, [text, width, height, plateThickness, marginTop, marginLeft, gridResolution]);
 
-  const generateModel = async () => {
-    if (!file) return;
+  const mmToPixels = mm => (mm / MM_TO_INCH) * DPI;
 
-    const imgBitmap = await createImageBitmap(file);
+  const generateModel = () => {
     const canvas = document.createElement('canvas');
-
-    // Вычисляем новые размеры с сохранением пропорций
-    let newWidth, newHeight;
-    if (imgBitmap.width > imgBitmap.height) {
-      newWidth = 512;
-      newHeight = Math.round((imgBitmap.height * 512) / imgBitmap.width);
-    } else {
-      newHeight = 512;
-      newWidth = Math.round((imgBitmap.width * 512) / imgBitmap.height);
-    }
-
-    // Добавляем 10 пикселей для рамки
-    canvas.width = newWidth + 10;
-    canvas.height = newHeight + 10;
+    canvas.width = mmToPixels(width);
+    canvas.height = mmToPixels(height);
     const ctx = canvas.getContext('2d');
 
-    // Заполняем весь канвас черным цветом
-    ctx.fillStyle = 'black';
+    // Установить белый фон
+    ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Рисуем масштабированное изображение с отступом 5 пикселей
-    ctx.drawImage(imgBitmap, 5, 5, newWidth, newHeight);
+    let x = mmToPixels(marginLeft);
+    let y = mmToPixels(marginTop);
+
+    const settings = {
+      dotRadius: mmToPixels(0.8),
+      dotSpacing: mmToPixels(2.7),
+      charSpacing: mmToPixels(6.6),
+      wordSpacing: mmToPixels(6.4),
+      lineSpacing: mmToPixels(10.8),
+    };
+
+    const drawBrailleChar = (ctx, x, y, dots) => {
+      const positions = [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 1],
+        [2, 0],
+        [2, 1],
+      ];
+
+      dots.forEach(dot => {
+        const [row, col] = positions[dot - 1];
+        const dotX = x + col * settings.dotSpacing;
+        const dotY = y + row * settings.dotSpacing;
+
+        const gradient = ctx.createRadialGradient(
+          dotX,
+          dotY,
+          0, // Начальная точка градиента (центр)
+          dotX,
+          dotY,
+          settings.dotRadius // Конечная точка градиента (край)
+        );
+        gradient.addColorStop(0, '#000000'); // Черный в центре
+        gradient.addColorStop(0.3, '#111111'); // Темно-серый
+        gradient.addColorStop(0.5, '#333333'); // Серый
+        gradient.addColorStop(0.7, '#666666'); // Светло-серый
+        gradient.addColorStop(0.9, '#999999'); // Очень светло-серый
+        gradient.addColorStop(1, '#ffffff'); // Белый по краям
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, settings.dotRadius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    };
+
+    for (const char of text.toLowerCase()) {
+      if (char === ' ') {
+        x += settings.wordSpacing;
+        continue;
+      }
+
+      if (char === '\n') {
+        x = mmToPixels(marginLeft);
+        y += settings.lineSpacing;
+        continue;
+      }
+
+      const dots = codes[char];
+      if (dots) {
+        drawBrailleChar(ctx, x, y, dots);
+        x += settings.charSpacing;
+      }
+
+      if (x + settings.charSpacing > canvas.width) {
+        x = mmToPixels(marginLeft);
+        y += settings.lineSpacing;
+      }
+
+      if (y + settings.lineSpacing > canvas.height) {
+        break;
+      }
+    }
+
+    setCanvas(canvas);
 
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-
-    const ratio = canvas.height / canvas.width;
-    setAspectRatio(ratio);
-
-    // Используем разрешение сетки для создания геометрии
     const cols = Math.min(gridResolution, canvas.width);
-    const rows = Math.round(cols * ratio);
+    const rows = Math.round(cols * (canvas.height / canvas.width));
     const positions = [];
     const indices = [];
 
-    const depth = width * ratio;
-
-    // Создаем сетку с заданным разрешением
     for (let j = 0; j < rows; j++) {
       for (let i = 0; i < cols; i++) {
-        // Вычисляем соответствующие координаты в исходном изображении
         const srcX = Math.floor((i / (cols - 1)) * canvas.width);
         const srcY = Math.floor((j / (rows - 1)) * canvas.height);
         const idx = (srcY * canvas.width + srcX) * 4;
         const brightness = imgData[idx];
-        const h = (brightness / 255) * reliefHeight;
-        const x = (i / (cols - 1) - 0.5) * width;
-        const y = -(j / (rows - 1) - 0.5) * depth;
-        positions.push(x, y, h);
+        const h = DOT_HEIGHT * (1 - brightness / 255);
+        const x = isNaN(i / (cols - 1)) ? 0 : (i / (cols - 1) - 0.5) * width;
+        const y = isNaN(j / (rows - 1)) ? 0 : -(j / (rows - 1) - 0.5) * height;
+        positions.push(
+          isNaN(x) ? 0 : x,
+          isNaN(y) ? 0 : y,
+          isNaN(h) ? 0 : h
+        );
       }
     }
 
@@ -165,16 +230,23 @@ export const useModelConfigurator = containerRef => {
         const b = j * cols + i + 1;
         const c = (j + 1) * cols + i;
         const d = (j + 1) * cols + i + 1;
-        indices.push(a, b, d, a, d, c);
+        if (a >= 0 && b >= 0 && c >= 0 && d >= 0 &&
+            a < positions.length / 3 && b < positions.length / 3 &&
+            c < positions.length / 3 && d < positions.length / 3) {
+          indices.push(a, b, d, a, d, c);
+        }
       }
     }
 
     const reliefGeo = new THREE.BufferGeometry();
     reliefGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     reliefGeo.setIndex(indices);
-    reliefGeo.computeVertexNormals();
+    
+    if (positions.length > 0 && indices.length > 0) {
+      reliefGeo.computeVertexNormals();
+    }
 
-    const reliefMaterial = new THREE.MeshStandardMaterial({
+    const material = new THREE.MeshStandardMaterial({
       color: 0xffd700,
       metalness: 0.3,
       roughness: 0.4,
@@ -182,19 +254,12 @@ export const useModelConfigurator = containerRef => {
       wireframe: isWireframe,
     });
 
-    const plateMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffd700,
-      metalness: 0.2,
-      roughness: 0.5,
-      wireframe: isWireframe,
-    });
-
-    const reliefMesh = new THREE.Mesh(reliefGeo, reliefMaterial);
+    const reliefMesh = new THREE.Mesh(reliefGeo, material);
     reliefMesh.castShadow = true;
     reliefMesh.receiveShadow = true;
 
-    const plateGeo = new THREE.BoxGeometry(width, depth, plateThickness);
-    const plateMesh = new THREE.Mesh(plateGeo, plateMaterial);
+    const plateGeo = new THREE.BoxGeometry(width, height, plateThickness);
+    const plateMesh = new THREE.Mesh(plateGeo, material);
     plateMesh.position.set(0, 0, -plateThickness / 2);
     plateMesh.castShadow = true;
     plateMesh.receiveShadow = true;
@@ -221,7 +286,7 @@ export const useModelConfigurator = containerRef => {
   const exportSTL = () => {
     const group = groupRef.current;
     if (!group) {
-      alert('Сначала сгенерируйте модель');
+      alert('Сначала введите текст');
       return;
     }
     const exporter = new STLExporter();
@@ -230,7 +295,7 @@ export const useModelConfigurator = containerRef => {
     const link = document.createElement('a');
     link.style.display = 'none';
     link.href = URL.createObjectURL(blob);
-    link.download = 'relief_plate.stl';
+    link.download = 'braille_plate.stl';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -238,19 +303,23 @@ export const useModelConfigurator = containerRef => {
   };
 
   return {
+    text,
+    setText,
     width,
     setWidth,
+    height,
+    setHeight,
     plateThickness,
     setPlateThickness,
-    reliefHeight,
-    setReliefHeight,
-    file,
-    setFile,
-    exportSTL,
-    aspectRatio,
+    marginTop,
+    setMarginTop,
+    marginLeft,
+    setMarginLeft,
     gridResolution,
     setGridResolution,
     isWireframe,
     setIsWireframe,
+    exportSTL,
+    canvas,
   };
-};
+}; 
