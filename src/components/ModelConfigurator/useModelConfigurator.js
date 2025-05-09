@@ -11,6 +11,7 @@ export const useModelConfigurator = containerRef => {
   const [aspectRatio, setAspectRatio] = useState(1);
   const [gridResolution, setGridResolution] = useState(100);
   const [isWireframe, setIsWireframe] = useState(false);
+  const [isInverted, setIsInverted] = useState(false);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
@@ -48,10 +49,10 @@ export const useModelConfigurator = containerRef => {
     controls.minDistance = 50;
     controls.maxDistance = 500;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
     mainLight.position.set(50, 100, 100);
     mainLight.castShadow = true;
     mainLight.shadow.mapSize.width = 2048;
@@ -62,13 +63,14 @@ export const useModelConfigurator = containerRef => {
     mainLight.shadow.camera.right = 100;
     mainLight.shadow.camera.top = 100;
     mainLight.shadow.camera.bottom = -100;
+    mainLight.shadow.bias = -0.0001;
     scene.add(mainLight);
 
-    const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
     fillLight.position.set(-50, 50, -50);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.2);
     rimLight.position.set(0, -50, 0);
     scene.add(rimLight);
 
@@ -101,7 +103,7 @@ export const useModelConfigurator = containerRef => {
     if (file) {
       generateModel();
     }
-  }, [width, plateThickness, reliefHeight, file, gridResolution]);
+  }, [width, plateThickness, reliefHeight, file, gridResolution, isInverted]);
 
   const generateModel = async () => {
     if (!file) return;
@@ -131,6 +133,19 @@ export const useModelConfigurator = containerRef => {
     // Рисуем масштабированное изображение с отступом 5 пикселей
     ctx.drawImage(imgBitmap, 5, 5, newWidth, newHeight);
 
+    // Инвертируем изображение, если нужно
+    if (isInverted) {
+      const imageData = ctx.getImageData(5, 5, newWidth, newHeight);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        // Инвертируем только пиксели внутри изображения (не трогаем черную рамку)
+        data[i] = 255 - data[i];     // R
+        data[i + 1] = 255 - data[i + 1]; // G
+        data[i + 2] = 255 - data[i + 2]; // B
+      }
+      ctx.putImageData(imageData, 5, 5);
+    }
+
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
     const ratio = canvas.height / canvas.width;
@@ -153,9 +168,13 @@ export const useModelConfigurator = containerRef => {
         const idx = (srcY * canvas.width + srcX) * 4;
         const brightness = imgData[idx];
         const h = (brightness / 255) * reliefHeight;
-        const x = (i / (cols - 1) - 0.5) * width;
-        const y = -(j / (rows - 1) - 0.5) * depth;
-        positions.push(x, y, h);
+        const x = isNaN(i / (cols - 1)) ? 0 : (i / (cols - 1) - 0.5) * width;
+        const y = isNaN(j / (rows - 1)) ? 0 : -(j / (rows - 1) - 0.5) * depth;
+        positions.push(
+          isNaN(x) ? 0 : x,
+          isNaN(y) ? 0 : y,
+          isNaN(h) ? 0 : h
+        );
       }
     }
 
@@ -165,36 +184,38 @@ export const useModelConfigurator = containerRef => {
         const b = j * cols + i + 1;
         const c = (j + 1) * cols + i;
         const d = (j + 1) * cols + i + 1;
-        indices.push(a, b, d, a, d, c);
+        // Проверяем, что все индексы валидны
+        if (a >= 0 && b >= 0 && c >= 0 && d >= 0 &&
+            a < positions.length / 3 && b < positions.length / 3 &&
+            c < positions.length / 3 && d < positions.length / 3) {
+          indices.push(a, b, d, a, d, c);
+        }
       }
     }
 
     const reliefGeo = new THREE.BufferGeometry();
     reliefGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     reliefGeo.setIndex(indices);
-    reliefGeo.computeVertexNormals();
+    
+    // Проверяем геометрию перед вычислением нормалей
+    if (positions.length > 0 && indices.length > 0) {
+      reliefGeo.computeVertexNormals();
+    }
 
-    const reliefMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffd700,
-      metalness: 0.3,
-      roughness: 0.4,
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xcccccc,
+      metalness: 0.0,
+      roughness: 0.7,
       side: THREE.DoubleSide,
       wireframe: isWireframe,
     });
 
-    const plateMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffd700,
-      metalness: 0.2,
-      roughness: 0.5,
-      wireframe: isWireframe,
-    });
-
-    const reliefMesh = new THREE.Mesh(reliefGeo, reliefMaterial);
+    const reliefMesh = new THREE.Mesh(reliefGeo, material);
     reliefMesh.castShadow = true;
     reliefMesh.receiveShadow = true;
 
     const plateGeo = new THREE.BoxGeometry(width, depth, plateThickness);
-    const plateMesh = new THREE.Mesh(plateGeo, plateMaterial);
+    const plateMesh = new THREE.Mesh(plateGeo, material);
     plateMesh.position.set(0, 0, -plateThickness / 2);
     plateMesh.castShadow = true;
     plateMesh.receiveShadow = true;
@@ -252,5 +273,7 @@ export const useModelConfigurator = containerRef => {
     setGridResolution,
     isWireframe,
     setIsWireframe,
+    isInverted,
+    setIsInverted,
   };
 };

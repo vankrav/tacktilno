@@ -33,6 +33,8 @@ const ModelConfigurator = () => {
     setGridResolution,
     isWireframe,
     setIsWireframe,
+    isInverted,
+    setIsInverted,
   } = useModelConfigurator(containerRef);
 
   const handleImageUpload = event => {
@@ -79,9 +81,12 @@ const ModelConfigurator = () => {
                       {file.name}
                     </Text>
                   )}
+                  <div className={styles.switchContainer}>
+                    <Text variant="body-2">Инвертировать изображение</Text>
+                    <Switch checked={isInverted} onUpdate={setIsInverted} />
+                  </div>
                   <Link href="/" view="normal">
                     Как сделать карту высот?
-                   
                   </Link>
                 </div>
 

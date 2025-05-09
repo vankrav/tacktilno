@@ -56,10 +56,10 @@ export const useBrailleConfigurator = containerRef => {
     controls.minDistance = 50;
     controls.maxDistance = 500;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
     mainLight.position.set(50, 100, 100);
     mainLight.castShadow = true;
     mainLight.shadow.mapSize.width = 2048;
@@ -70,13 +70,14 @@ export const useBrailleConfigurator = containerRef => {
     mainLight.shadow.camera.right = 100;
     mainLight.shadow.camera.top = 100;
     mainLight.shadow.camera.bottom = -100;
+    mainLight.shadow.bias = -0.0001;
     scene.add(mainLight);
 
-    const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.2);
     fillLight.position.set(-50, 50, -50);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.2);
     rimLight.position.set(0, -50, 0);
     scene.add(rimLight);
 
@@ -247,9 +248,9 @@ export const useBrailleConfigurator = containerRef => {
     }
 
     const material = new THREE.MeshStandardMaterial({
-      color: 0xffd700,
-      metalness: 0.3,
-      roughness: 0.4,
+      color: 0xcccccc,
+      metalness: 0.0,
+      roughness: 0.7,
       side: THREE.DoubleSide,
       wireframe: isWireframe,
     });
