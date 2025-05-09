@@ -115,10 +115,19 @@ export const useBrailleConfigurator = containerRef => {
   const mmToPixels = mm => (mm / MM_TO_INCH) * DPI;
 
   const generateModel = () => {
+    if (!width || !height || width <= 0 || height <= 0) {
+      return;
+    }
+
     const canvas = document.createElement('canvas');
     canvas.width = mmToPixels(width);
     canvas.height = mmToPixels(height);
     const ctx = canvas.getContext('2d');
+
+    // Проверяем, что размеры canvas больше 0
+    if (canvas.width <= 0 || canvas.height <= 0) {
+      return;
+    }
 
     // Установить белый фон
     ctx.fillStyle = 'white';

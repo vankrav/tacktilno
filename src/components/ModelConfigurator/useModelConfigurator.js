@@ -18,6 +18,17 @@ export const useModelConfigurator = containerRef => {
   const controlsRef = useRef(null);
   const groupRef = useRef(null);
 
+  // Загрузка Lisa.png по умолчанию
+  useEffect(() => {
+    fetch('/Lisa.png')
+      .then(response => response.blob())
+      .then(blob => {
+        const defaultFile = new File([blob], 'Lisa.png', { type: 'image/png' });
+        setFile(defaultFile);
+      })
+      .catch(error => console.error('Ошибка загрузки Lisa.png:', error));
+  }, []);
+
   useEffect(() => {
     const container = containerRef.current;
     const scene = new THREE.Scene();

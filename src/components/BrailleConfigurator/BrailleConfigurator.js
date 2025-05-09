@@ -73,26 +73,26 @@ const BrailleConfigurator = () => {
                   <NumberInput
                     label="Ширина (мм):"
                     placeholder="Введите ширину"
-                    min={10}
+                    min={1}
                     max={3000}
-                    value={width}
-                    onUpdate={setWidth}
+                    value={width || ''}
+                    onUpdate={(value) => setWidth(value || 1)}
                   />
                   <NumberInput
                     label="Высота (мм):"
                     placeholder="Введите высоту"
-                    min={10}
+                    min={1}
                     max={3000}
-                    value={height}
-                    onUpdate={setHeight}
+                    value={height || ''}
+                    onUpdate={(value) => setHeight(value || 1)}
                   />
                   <NumberInput
                     label="Толщина (мм):"
                     placeholder="Введите толщину"
                     min={1}
                     max={3000}
-                    value={plateThickness}
-                    onUpdate={setPlateThickness}
+                    value={plateThickness || ''}
+                    onUpdate={(value) => setPlateThickness(value || 1)}
                   />
                 </div>
 
@@ -101,25 +101,29 @@ const BrailleConfigurator = () => {
                   <NumberInput
                     label="Отступ сверху (мм):"
                     placeholder="Введите отступ"
-                    min={0}
+                    min={1}
                     max={100}
-                    value={marginTop}
-                    onUpdate={setMarginTop}
+                    value={marginTop || ''}
+                    onUpdate={(value) => setMarginTop(value || 1)}
                   />
                   <NumberInput
                     label="Отступ слева (мм):"
                     placeholder="Введите отступ"
-                    min={0}
+                    min={1}
                     max={100}
-                    value={marginLeft}
-                    onUpdate={setMarginLeft}
+                    value={marginLeft || ''}
+                    onUpdate={(value) => setMarginLeft(value || 1)}
                   />
                 </div>
 
                 <div className={styles.settingsGroup}>
                   <Text variant="subheader-2">Настройки сетки</Text>
                   <div className={styles.sliderContainer}>
-                    <Text variant="body-2">Разрешение сетки: {gridResolution}</Text>
+                  <div className={styles.switchContainer}>
+                    <Text variant="body-2">Wireframe режим</Text>
+                    <Switch checked={isWireframe} onUpdate={setIsWireframe} />
+                  </div>
+                    
                     <Slider
                       value={gridResolution}
                       onUpdate={setGridResolution}
@@ -127,13 +131,11 @@ const BrailleConfigurator = () => {
                       max={512}
                       step={1}
                       tooltipDisplay="on"
-                      marks={[10, 100, 200, 300, 400, 512]}
+                     
                     />
                   </div>
-                  <div className={styles.switchContainer}>
-                    <Text variant="body-2">Wireframe режим</Text>
-                    <Switch checked={isWireframe} onUpdate={setIsWireframe} />
-                  </div>
+                  <Text variant="body-2">Разрешение сетки: {gridResolution}</Text>
+                  
                 </div>
 
                 <div className={styles.exportButton}>

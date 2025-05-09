@@ -72,6 +72,9 @@ const ModelConfigurator = () => {
                     accept="image/*"
                     style={{ display: 'none' }}
                   />
+                  <Link href="/" view="normal">
+                    Как сделать карту высот?
+                  </Link>
                   <Button size="l" view="normal" width="max" onClick={handleButtonClick}>
                     <Icon data={ArrowShapeDownToLine} size={18} />
                     Загрузить изображение
@@ -81,13 +84,13 @@ const ModelConfigurator = () => {
                       {file.name}
                     </Text>
                   )}
-                  <div className={styles.switchContainer}>
-                    <Text variant="body-2">Инвертировать изображение</Text>
-                    <Switch checked={isInverted} onUpdate={setIsInverted} />
-                  </div>
-                  <Link href="/" view="normal">
-                    Как сделать карту высот?
-                  </Link>
+                  {file && (
+                    <div className={styles.switchContainer}>
+                      <Text variant="body-2">Инвертировать изображение</Text>
+                      <Switch checked={isInverted} onUpdate={setIsInverted} />
+                    </div>
+                  )}
+                  
                 </div>
 
                 <div className={styles.settingsGroup}>
@@ -132,8 +135,12 @@ const ModelConfigurator = () => {
 
                 <div className={styles.settingsGroup}>
                   <Text variant="subheader-2">Настройки сетки</Text>
+                  <div className={styles.switchContainer}>
+                    <Text variant="body-2">Wireframe режим</Text>
+                    <Switch checked={isWireframe} onUpdate={setIsWireframe} />
+                  </div>
                   <div className={styles.sliderContainer}>
-                    <Text variant="body-2">Разрешение сетки: {gridResolution}</Text>
+                   
                     <Slider
                       value={gridResolution}
                       onUpdate={setGridResolution}
@@ -141,13 +148,11 @@ const ModelConfigurator = () => {
                       max={512}
                       step={1}
                       tooltipDisplay="on"
-                      marks={[10, 100, 200, 300, 400, 512]}
+                     
                     />
+                     <Text variant="body-2">Разрешение сетки: {gridResolution}</Text>
                   </div>
-                  <div className={styles.switchContainer}>
-                    <Text variant="body-2">Wireframe режим</Text>
-                    <Switch checked={isWireframe} onUpdate={setIsWireframe} />
-                  </div>
+                  
                 </div>
 
                 <div className={styles.exportButton}>
