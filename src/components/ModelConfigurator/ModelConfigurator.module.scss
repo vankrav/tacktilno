@@ -60,15 +60,17 @@
 }
 
 .spinner {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 1s ease-in-out infinite;
-  vertical-align: middle;
+  display: inline-block !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 8px !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 50% !important;
+  border-top-color: #fff !important;
+  animation: spin 1s ease-in-out infinite !important;
+  vertical-align: middle !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 @keyframes spin {

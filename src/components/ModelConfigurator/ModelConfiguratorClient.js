@@ -34,10 +34,13 @@ const ModelConfiguratorClient = ({
   useEffect(() => {
     const initModel = async () => {
       try {
+        console.log('Начало загрузки модели');
         setModelLoading(true);
         modelRef.current = await pipeline('depth-estimation', 'Xenova/depth-anything-small-hf');
+        console.log('Модель загружена успешно');
         setModelLoading(false);
       } catch (err) {
+        console.error('Ошибка при загрузке модели:', err);
         setError('Ошибка при инициализации модели: ' + err.message);
         setModelLoading(false);
       }
@@ -48,6 +51,7 @@ const ModelConfiguratorClient = ({
   const processImage = async (imageUrl) => {
     if (!imageUrl || !modelRef.current) return;
 
+    console.log('Начало обработки изображения');
     setIsProcessing(true);
     setError(null);
 
