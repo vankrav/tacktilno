@@ -151,9 +151,11 @@ const ModelConfigurator = () => {
       <div className={styles.container}>
         <Row space="2">
           <Col s="8" space="2">
-            <Card type="container" view="outlined" style={{ height: '500px' }}>
-              <div ref={containerRef} className={styles.modelContainer} />
-            </Card>
+            <div className={styles.modelWrapper}>
+              <Card type="container" view="outlined" style={{ height: '100%' }}>
+                <div ref={containerRef} className={styles.modelContainer} />
+              </Card>
+            </div>
           </Col>
 
           <Col s="4" space="2">
@@ -179,10 +181,7 @@ const ModelConfigurator = () => {
                     setContrast={setContrast}
                     file={file}
                   />
-                  <Button size="l" view="normal" width="max" onClick={() => fileInputRef.current?.click()}>
-                    <Icon data={ArrowShapeDownToLine} size={18} />
-                    Загрузить готовую карту высот
-                  </Button>
+                 
                   {file && (
                     <Text variant="body-2" color="secondary" className={styles.fileName}>
                       Загруженный файл: {file.name}

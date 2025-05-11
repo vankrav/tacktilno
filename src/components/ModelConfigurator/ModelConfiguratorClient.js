@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { pipeline, env } from '@xenova/transformers';
 import { Button } from '@gravity-ui/uikit';
 import { Icon } from '@gravity-ui/uikit';
-import { MagicWand } from '@gravity-ui/icons';
+import { MagicWand, ArrowShapeDownToLine } from '@gravity-ui/icons';
 import { Switch } from '@gravity-ui/uikit';
 import { Slider } from '@gravity-ui/uikit';
 import { Text } from '@gravity-ui/uikit';
@@ -29,6 +29,7 @@ const ModelConfiguratorClient = ({
   const [error, setError] = useState(null);
   const canvasRef = useRef(null);
   const modelRef = useRef(null);
+  const uploadInputRef = useRef(null);
 
   useEffect(() => {
     const initModel = async () => {
@@ -118,6 +119,13 @@ const ModelConfiguratorClient = ({
     }
   };
 
+  const handleDirectUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFile(file);
+    }
+  };
+
   return (
     <>
       <input
@@ -127,32 +135,52 @@ const ModelConfiguratorClient = ({
         accept="image/*"
         style={{ display: 'none' }}
       />
-      <Button 
-        size="l" 
-        view="action" 
-        width="max" 
-        onClick={() => fileInputRef.current?.click()}
-        disabled={isProcessing || modelLoading}
-      >
-        {isProcessing ? (
-          <>
-            <div className={styles.spinner} />
-            Обработка изображения...
-          </>
-        ) : modelLoading ? (
-          <>
-            <div className={styles.spinner} />
-            Загрузка модели...
-          </>
-        ) : (
-          <>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Icon data={MagicWand} size={18} />
-              <span>Автоматически создать карту высот</span>
-            </div>
-          </>
-        )}
-      </Button>
+      <input
+        type="file"
+        ref={uploadInputRef}
+        onChange={handleDirectUpload}
+        accept="image/*"
+        style={{ display: 'none' }}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
+        <Button 
+          size="l" 
+          view="action" 
+          width="max" 
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isProcessing || modelLoading}
+        >
+          {isProcessing ? (
+            <>
+              <div className={styles.spinner} />
+              Обработка изображения...
+            </>
+          ) : modelLoading ? (
+            <>
+              <div className={styles.spinner} />
+              Загрузка модели...
+            </>
+          ) : (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Icon data={MagicWand} size={18} />
+                <span>Создать карту высот</span>
+              </div>
+            </>
+          )}
+        </Button>
+        <Button 
+          size="l" 
+          view="normal" 
+          width="max" 
+          onClick={() => uploadInputRef.current?.click()}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon data={ArrowShapeDownToLine} size={18} />
+            <span>Загрузить карту высот</span>
+          </div>
+        </Button>
+      </div>
       {error && (
         <Text variant="body-2" color="danger" className={styles.error}>
           {error}
