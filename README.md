@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TackTilno
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-15.3.1-black)
+![React](https://img.shields.io/badge/React-19.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-First, run the development server:
+## 📝 Описание
+
+TackTilno - это современное веб-приложение, построенное на стеке Next.js и React. Проект использует передовые технологии и библиотеки для создания интерактивного и производительного пользовательского опыта.
+
+## 🚀 Технологии
+
+- **Frontend Framework:** Next.js 15.3.1
+- **UI Library:** React 19.0.0
+- **UI Components:** 
+  - @gravity-ui/uikit
+  - @gravity-ui/page-constructor
+- **3D Графика:** 
+  - Three.js
+  - @react-three/fiber
+  - @react-three/drei
+- **AI/ML:** 
+  - @huggingface/transformers
+  - @xenova/transformers
+- **Стилизация:** 
+  - SASS
+- **Документация:** 
+  - @diplodoc/transform
+
+## 🛠️ Установка и запуск
+
+### Предварительные требования
+
+- Node.js (рекомендуется последняя LTS версия)
+- npm или yarn
+
+### Установка
+
+1. Клонируйте репозиторий:
+```bash
+git clone https://github.com/your-username/tacktilno.git
+cd tacktilno
+```
+
+2. Установите зависимости:
+```bash
+npm install
+# или
+yarn install
+```
+
+### Разработка
+
+Для запуска проекта в режиме разработки:
 
 ```bash
 npm run dev
-# or
+# или
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Приложение будет доступно по адресу [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Сборка
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Для создания production-сборки:
 
-## Learn More
+```bash
+npm run build
+# или
+yarn build
+```
 
-To learn more about Next.js, take a look at the following resources:
+Для запуска production-версии:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run start
+# или
+yarn start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📋 Доступные скрипты
 
-## Deploy on Vercel
+- `npm run dev` - Запуск сервера разработки
+- `npm run build` - Сборка production-версии
+- `npm run start` - Запуск production-версии
+- `npm run lint` - Проверка кода линтером
+- `npm run format` - Форматирование кода
+- `npm run format:check` - Проверка форматирования кода
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🏗️ Структура проекта
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+tacktilno/
+├── src/              # Исходный код приложения
+├── public/           # Статические файлы
+├── .next/           # Сборка Next.js
+├── node_modules/    # Зависимости
+├── .vercel/         # Конфигурация Vercel
+└── ...
+```
+
+## 🧪 Тестирование
+
+Информация о тестировании будет добавлена в ближайшее время.
+
+## 📦 Деплой
+
+Проект настроен для деплоя на [Vercel](https://vercel.com). Для деплоя:
+
+1. Создайте аккаунт на Vercel
+2. Подключите ваш GitHub репозиторий
+3. Следуйте инструкциям по деплою на Vercel
+
+## 🤝 Вклад в проект
+
+Мы приветствуем вклад в развитие проекта! Пожалуйста, следуйте этим шагам:
+
+1. Форкните репозиторий
+2. Создайте ветку для ваших изменений (`git checkout -b feature/amazing-feature`)
+3. Зафиксируйте ваши изменения (`git commit -m 'Add some amazing feature'`)
+4. Отправьте изменения в ваш форк (`git push origin feature/amazing-feature`)
+5. Откройте Pull Request
+
+## 📄 Лицензия
+
+Этот проект распространяется под лицензией MIT. Подробности смотрите в файле [LICENSE](LICENSE).
+
+## 📞 Контакты
+
+Если у вас есть вопросы или предложения, пожалуйста, создайте issue в репозитории проекта.
+
+---
+
+Сделано с ❤️ командой TackTilno
