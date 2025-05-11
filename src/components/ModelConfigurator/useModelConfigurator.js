@@ -12,6 +12,7 @@ export const useModelConfigurator = containerRef => {
   const [gridResolution, setGridResolution] = useState(100);
   const [isWireframe, setIsWireframe] = useState(false);
   const [isInverted, setIsInverted] = useState(false);
+  const [contrast, setContrast] = useState(1);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
@@ -114,7 +115,7 @@ export const useModelConfigurator = containerRef => {
     if (file) {
       generateModel();
     }
-  }, [width, plateThickness, reliefHeight, file, gridResolution, isInverted]);
+  }, [width, plateThickness, reliefHeight, file, gridResolution, isInverted, contrast]);
 
   const generateModel = async () => {
     if (!file) return;
@@ -144,18 +145,28 @@ export const useModelConfigurator = containerRef => {
     // Рисуем масштабированное изображение с отступом 5 пикселей
     ctx.drawImage(imgBitmap, 5, 5, newWidth, newHeight);
 
-    // Инвертируем изображение, если нужно
-    if (isInverted) {
-      const imageData = ctx.getImageData(5, 5, newWidth, newHeight);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        // Инвертируем только пиксели внутри изображения (не трогаем черную рамку)
-        data[i] = 255 - data[i];     // R
-        data[i + 1] = 255 - data[i + 1]; // G
-        data[i + 2] = 255 - data[i + 2]; // B
+    // Применяем контраст и инверсию
+    const imageData = ctx.getImageData(5, 5, newWidth, newHeight);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      // Применяем контраст
+      const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+      const r = factor * (data[i] - 128) + 128;
+      const g = factor * (data[i + 1] - 128) + 128;
+      const b = factor * (data[i + 2] - 128) + 128;
+      
+      // Инвертируем, если нужно
+      if (isInverted) {
+        data[i] = 255 - Math.min(255, Math.max(0, r));
+        data[i + 1] = 255 - Math.min(255, Math.max(0, g));
+        data[i + 2] = 255 - Math.min(255, Math.max(0, b));
+      } else {
+        data[i] = Math.min(255, Math.max(0, r));
+        data[i + 1] = Math.min(255, Math.max(0, g));
+        data[i + 2] = Math.min(255, Math.max(0, b));
       }
-      ctx.putImageData(imageData, 5, 5);
     }
+    ctx.putImageData(imageData, 5, 5);
 
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
@@ -286,5 +297,7 @@ export const useModelConfigurator = containerRef => {
     setIsWireframe,
     isInverted,
     setIsInverted,
+    contrast,
+    setContrast,
   };
 };
