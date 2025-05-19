@@ -104,7 +104,7 @@ const CurvesEditor = ({ onChange, value = Array.from({ length: 256 }, (_, i) => 
       const dy = p1.y - p0.y;
       
       // Используем более плавное распределение контрольных точек
-      const tension = 0.5; // Увеличиваем натяжение для более выраженной кривой
+      const tension = 0.7; // Увеличиваем натяжение для более плавной кривой
       const cp1x = p0.x + dx * tension;
       const cp1y = p0.y + dy * tension;
       const cp2x = p1.x - dx * tension;
@@ -248,27 +248,32 @@ const CurvesEditor = ({ onChange, value = Array.from({ length: 256 }, (_, i) => 
       const t = (x - p1.x) / (p2.x - p1.x);
       
       // Используем кубическую интерполяцию для более плавного перехода
-      const tension = 0.4;
+      const tension = 0.6; // Увеличиваем натяжение для более плавной интерполяции
       const dx = p2.x - p1.x;
       const dy = p2.y - p1.y;
       
-      // Вычисляем контрольные точки
+      // Вычисляем контрольные точки с дополнительным сглаживанием
       const cp1x = p1.x + dx * tension;
       const cp1y = p1.y + dy * tension;
       const cp2x = p2.x - dx * tension;
       const cp2y = p2.y - dy * tension;
       
-      // Кубическая интерполяция Безье
+      // Кубическая интерполяция Безье с дополнительным сглаживанием
       const mt = 1 - t;
       const mt2 = mt * mt;
+      const mt3 = mt2 * mt;
       const t2 = t * t;
+      const t3 = t2 * t;
       
-      values[x] = Math.round(
-        mt2 * mt * p1.y +
-        3 * mt2 * t * cp1y +
-        3 * mt * t2 * cp2y +
-        t2 * t * p2.y
-      );
+      // Добавляем сглаживающий коэффициент
+      const smoothFactor = 0.5;
+      const smoothedY = 
+        mt3 * p1.y +
+        3 * mt2 * t * (cp1y * (1 - smoothFactor) + p1.y * smoothFactor) +
+        3 * mt * t2 * (cp2y * (1 - smoothFactor) + p2.y * smoothFactor) +
+        t3 * p2.y;
+      
+      values[x] = Math.round(smoothedY);
     }
     
     return values;
