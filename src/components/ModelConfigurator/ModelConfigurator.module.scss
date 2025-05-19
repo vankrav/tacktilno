@@ -56,7 +56,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 10px;
+  margin: 20px 0 10px 0;
 }
 
 .spinner {
@@ -82,4 +82,34 @@
   padding: 8px;
   border-radius: 4px;
   background-color: rgba(255, 0, 0, 0.1);
+}
+
+.curvesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.curvesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 20px 0 10px 0;
+}
+
+.curvesEditor {
+  margin: 10px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #ffffff;
+  
+  canvas {
+    outline: none;
+    
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.2);
+    }
+  }
 }

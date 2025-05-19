@@ -22,6 +22,10 @@ const ModelConfiguratorClient = ({
   setIsInverted,
   contrast,
   setContrast,
+  isCurvesMode,
+  setIsCurvesMode,
+  curveValues,
+  setCurveValues,
   file,
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);

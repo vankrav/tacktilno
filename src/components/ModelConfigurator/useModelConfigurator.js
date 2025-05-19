@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter';
@@ -12,7 +12,9 @@ export const useModelConfigurator = containerRef => {
   const [gridResolution, setGridResolution] = useState(100);
   const [isWireframe, setIsWireframe] = useState(false);
   const [isInverted, setIsInverted] = useState(false);
-  const [contrast, setContrast] = useState(1);
+  const [contrast, setContrast] = useState(0);
+  const [isCurvesMode, setIsCurvesMode] = useState(false);
+  const [curveValues, setCurveValues] = useState(Array.from({ length: 256 }, (_, i) => i));
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
@@ -115,7 +117,7 @@ export const useModelConfigurator = containerRef => {
     if (file) {
       generateModel();
     }
-  }, [width, plateThickness, reliefHeight, file, gridResolution, isInverted, contrast]);
+  }, [width, plateThickness, reliefHeight, file, gridResolution, isInverted, contrast, curveValues, isCurvesMode]);
 
   const generateModel = async () => {
     if (!file) return;
@@ -145,25 +147,41 @@ export const useModelConfigurator = containerRef => {
     // Рисуем масштабированное изображение с отступом 5 пикселей
     ctx.drawImage(imgBitmap, 5, 5, newWidth, newHeight);
 
-    // Применяем контраст и инверсию
+    // Применяем кривые и инверс
     const imageData = ctx.getImageData(5, 5, newWidth, newHeight);
     const data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
-      // Применяем контраст
-      const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
-      const r = factor * (data[i] - 128) + 128;
-      const g = factor * (data[i + 1] - 128) + 128;
-      const b = factor * (data[i + 2] - 128) + 128;
+      let r = data[i];
+      let g = data[i + 1];
+      let b = data[i + 2];
+      
+      // Применяем кривые или контраст в зависимости от режима
+      if (isCurvesMode) {
+        r = curveValues[r];
+        g = curveValues[g];
+        b = curveValues[b];
+      } else {
+        // Применяем контраст
+        const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+        r = factor * (r - 128) + 128;
+        g = factor * (g - 128) + 128;
+        b = factor * (b - 128) + 128;
+      }
+      
+      // Ограничиваем значения
+      r = Math.max(0, Math.min(255, r));
+      g = Math.max(0, Math.min(255, g));
+      b = Math.max(0, Math.min(255, b));
       
       // Инвертируем, если нужно
       if (isInverted) {
-        data[i] = 255 - Math.min(255, Math.max(0, r));
-        data[i + 1] = 255 - Math.min(255, Math.max(0, g));
-        data[i + 2] = 255 - Math.min(255, Math.max(0, b));
+        data[i] = 255 - r;
+        data[i + 1] = 255 - g;
+        data[i + 2] = 255 - b;
       } else {
-        data[i] = Math.min(255, Math.max(0, r));
-        data[i + 1] = Math.min(255, Math.max(0, g));
-        data[i + 2] = Math.min(255, Math.max(0, b));
+        data[i] = r;
+        data[i + 1] = g;
+        data[i + 2] = b;
       }
     }
     ctx.putImageData(imageData, 5, 5);
@@ -280,6 +298,11 @@ export const useModelConfigurator = containerRef => {
     URL.revokeObjectURL(link.href);
   };
 
+  const resetCurve = useCallback(() => {
+    const resetValues = Array.from({ length: 256 }, (_, i) => i);
+    setCurveValues(resetValues);
+  }, []);
+
   return {
     width,
     setWidth,
@@ -299,5 +322,10 @@ export const useModelConfigurator = containerRef => {
     setIsInverted,
     contrast,
     setContrast,
+    isCurvesMode,
+    setIsCurvesMode,
+    curveValues,
+    setCurveValues,
+    resetCurve,
   };
 };
