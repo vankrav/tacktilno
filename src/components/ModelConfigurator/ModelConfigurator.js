@@ -18,6 +18,7 @@ import ArrowUpRightFromSquareIcon from '@gravity-ui/icons/svgs/arrow-up-right-fr
 import MagicWandIcon from '@gravity-ui/icons/svgs/magic-wand.svg';
 import {MagicWand} from '@gravity-ui/icons';
 import dynamic from 'next/dynamic';
+import CurvesEditor from './CurvesEditor';
 
 // Динамически импортируем transformers только на клиенте
 const ModelConfiguratorClient = dynamic(() => import('./ModelConfiguratorClient'), {
@@ -51,6 +52,11 @@ const ModelConfigurator = () => {
     setIsInverted,
     contrast,
     setContrast,
+    isCurvesMode,
+    setIsCurvesMode,
+    curveValues,
+    setCurveValues,
+    resetCurve,
   } = useModelConfigurator(containerRef);
 
   useEffect(() => {
@@ -179,6 +185,10 @@ const ModelConfigurator = () => {
                     setIsInverted={setIsInverted}
                     contrast={contrast}
                     setContrast={setContrast}
+                    isCurvesMode={isCurvesMode}
+                    setIsCurvesMode={setIsCurvesMode}
+                    curveValues={curveValues}
+                    setCurveValues={setCurveValues}
                     file={file}
                   />
                  
@@ -201,19 +211,44 @@ const ModelConfigurator = () => {
                       </div>
                       <Switch checked={isInverted} onUpdate={setIsInverted} />
                     </div>
-                    <div className={styles.sliderContainer}>
-                      <Tooltip content="Увеличивает или уменьшает разницу между высокими и низкими точками. Положительные значения делают рельеф более выраженным, отрицательные - более плавным.">
-                        <Text variant="body-2">Контраст</Text>
-                      </Tooltip>
-                      <Slider
-                        value={contrast}
-                        onUpdate={setContrast}
-                        min={-255}
-                        max={255}
-                        step={1}
-                        tooltipDisplay="on"
-                      />
+                    <div className={styles.switchContainer}>
+                      <div>
+                        <Tooltip content="Включите для использования кривых яркости вместо простого контраста. Кривые дают более гибкий контроль над преобразованием яркости.">
+                          <Text variant="body-2">Режим кривых</Text>
+                        </Tooltip>
+                      </div>
+                      <Switch checked={isCurvesMode} onUpdate={setIsCurvesMode} />
                     </div>
+                    {isCurvesMode ? (
+                      <div className={styles.curvesContainer}>
+                        <div className={styles.curvesHeader}>
+                          <Tooltip content="Настройте кривую яркости для более точного контроля над рельефом. Перетаскивайте точки для изменения формы кривой, добавляйте новые точки кликом, удаляйте точки клавишей Delete.">
+                            <Text variant="body-2">Кривая яркости</Text>
+                          </Tooltip>
+                          <Button view="flat" size="s" onClick={resetCurve}>
+                            Сбросить кривую
+                          </Button>
+                        </div>
+                        <CurvesEditor
+                          value={curveValues}
+                          onChange={setCurveValues}
+                        />
+                      </div>
+                    ) : (
+                      <div className={styles.sliderContainer}>
+                        <Tooltip content="Увеличивает или уменьшает разницу между высокими и низкими точками. Положительные значения делают рельеф более выраженным, отрицательные - более плавным.">
+                          <Text variant="body-2">Контраст</Text>
+                        </Tooltip>
+                        <Slider
+                          value={contrast}
+                          onUpdate={setContrast}
+                          min={-255}
+                          max={255}
+                          step={1}
+                          tooltipDisplay="on"
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
 
