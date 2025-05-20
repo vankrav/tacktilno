@@ -1,7 +1,6 @@
 const content = {
   blocks: [
     {
-      key: 'header-block',
       buttons: [
         {
           text: 'Тактильная модель по изображению\r',
@@ -31,13 +30,11 @@ const content = {
       },
     },
     {
-      centered: true,
       className: '',
       color: {
         dark: '#262626',
         light: '#EFF2F8'
       },
-     
       subtitle: 'Но пока её нет 🙌',
       theme: 'light',
       title: 'Скоро тут появится база знаний',
