@@ -134,107 +134,129 @@ const BrailleCanvas = () => {
   };
 
   return (
-    <div style={{ marginBottom: '10px', marginTop: '10px', marginLeft: '40px' }}>
-      <h2>Преобразователь текста в шрифт Брайля</h2>
-      <div>
-        <h3>Настройки страницы</h3>
-        <label>
-          Ширина страницы (мм):
-          <input
-            type="number"
-            value={pageWidth}
-            onChange={e => setPageWidth(parseFloat(e.target.value))}
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
+    <div style={{ marginBottom: '10px', marginTop: '10px', marginLeft: '40px' }} role="main">
+      <h2 tabIndex="0" aria-label="Преобразователь текста в шрифт Брайля">Преобразователь текста в шрифт Брайля</h2>
+      <div role="form" aria-label="Настройки преобразования">
+        <h3 tabIndex="0" aria-label="Настройки страницы">Настройки страницы</h3>
+        <div role="group" aria-labelledby="page-settings">
+          <label htmlFor="page-width">
+            Ширина страницы (мм):
+            <input
+              id="page-width"
+              type="number"
+              value={pageWidth}
+              onChange={e => setPageWidth(parseFloat(e.target.value))}
+              style={{ marginLeft: '10px' }}
+              aria-label="Ширина страницы в миллиметрах"
+            />
+          </label>
+          <br />
+          <label htmlFor="page-height">
+            Высота страницы (мм):
+            <input
+              id="page-height"
+              type="number"
+              value={pageHeight}
+              onChange={e => setPageHeight(parseFloat(e.target.value))}
+              style={{ marginLeft: '10px' }}
+              aria-label="Высота страницы в миллиметрах"
+            />
+          </label>
+          <br />
+          <label htmlFor="margin-top">
+            Отступ сверху (мм):
+            <input
+              id="margin-top"
+              type="number"
+              value={marginTopMm}
+              onChange={e => setMarginTopMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
+              min="0.1"
+              style={{ marginLeft: '10px' }}
+              aria-label="Отступ сверху в миллиметрах"
+            />
+          </label>
+          <br />
+          <label htmlFor="margin-left">
+            Отступ слева (мм):
+            <input
+              id="margin-left"
+              type="number"
+              value={marginLeftMm}
+              onChange={e => setMarginLeftMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
+              min="0.1"
+              style={{ marginLeft: '10px' }}
+              aria-label="Отступ слева в миллиметрах"
+            />
+          </label>
+        </div>
         <br />
-        <label>
-          Высота страницы (мм):
-          <input
-            type="number"
-            value={pageHeight}
-            onChange={e => setPageHeight(parseFloat(e.target.value))}
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        <br />
-        <label>
-          Отступ сверху (мм):
-          <input
-            type="number"
-            value={marginTopMm}
-            onChange={e => setMarginTopMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
-            min="0.1"
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        <br />
-        <label>
-          Отступ слева (мм):
-          <input
-            type="number"
-            value={marginLeftMm}
-            onChange={e => setMarginLeftMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
-            min="0.1"
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        <br />
-        <h3>Настройки шрифта Брайля</h3>
-        <label>
-          Радиус точки (мм):
-          <input
-            type="number"
-            value={dotRadiusMm}
-            onChange={e => setDotRadiusMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
-            min="0.1"
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        <br />
-        <label>
-          Расстояние между точками (мм):
-          <input
-            type="number"
-            value={dotSpacingMm}
-            onChange={e => setDotSpacingMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
-            min="0.1"
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        <br />
-        <label>
-          Расстояние между символами (мм):
-          <input
-            type="number"
-            value={charSpacingMm}
-            onChange={e => setCharSpacingMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
-            min="0.1"
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        <br />
-        <label>
-          Расстояние между словами (мм):
-          <input
-            type="number"
-            value={wordSpacingMm}
-            onChange={e => setWordSpacingMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
-            min="0.1"
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        <br />
-        <label>
-          Межстрочное расстояние (мм):
-          <input
-            type="number"
-            value={lineSpacingMm}
-            onChange={e => setLineSpacingMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
-            min="0.1"
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
+        <h3 tabIndex="0" aria-label="Настройки шрифта Брайля">Настройки шрифта Брайля</h3>
+        <div role="group" aria-labelledby="braille-settings">
+          <label htmlFor="dot-radius">
+            Радиус точки (мм):
+            <input
+              id="dot-radius"
+              type="number"
+              value={dotRadiusMm}
+              onChange={e => setDotRadiusMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
+              min="0.1"
+              style={{ marginLeft: '10px' }}
+              aria-label="Радиус точки в миллиметрах"
+            />
+          </label>
+          <br />
+          <label htmlFor="dot-spacing">
+            Расстояние между точками (мм):
+            <input
+              id="dot-spacing"
+              type="number"
+              value={dotSpacingMm}
+              onChange={e => setDotSpacingMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
+              min="0.1"
+              style={{ marginLeft: '10px' }}
+              aria-label="Расстояние между точками в миллиметрах"
+            />
+          </label>
+          <br />
+          <label htmlFor="char-spacing">
+            Расстояние между символами (мм):
+            <input
+              id="char-spacing"
+              type="number"
+              value={charSpacingMm}
+              onChange={e => setCharSpacingMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
+              min="0.1"
+              style={{ marginLeft: '10px' }}
+              aria-label="Расстояние между символами в миллиметрах"
+            />
+          </label>
+          <br />
+          <label htmlFor="word-spacing">
+            Расстояние между словами (мм):
+            <input
+              id="word-spacing"
+              type="number"
+              value={wordSpacingMm}
+              onChange={e => setWordSpacingMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
+              min="0.1"
+              style={{ marginLeft: '10px' }}
+              aria-label="Расстояние между словами в миллиметрах"
+            />
+          </label>
+          <br />
+          <label htmlFor="line-spacing">
+            Межстрочное расстояние (мм):
+            <input
+              id="line-spacing"
+              type="number"
+              value={lineSpacingMm}
+              onChange={e => setLineSpacingMm(Math.max(0.1, parseFloat(e.target.value) || 0.1))}
+              min="0.1"
+              style={{ marginLeft: '10px' }}
+              aria-label="Межстрочное расстояние в миллиметрах"
+            />
+          </label>
+        </div>
         <br />
 
         <h3>Текст</h3>

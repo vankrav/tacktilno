@@ -167,15 +167,15 @@ const ModelConfigurator = () => {
           <Col s="4" space="2">
             <Card type="container" view="outlined" style={{ height: '100%' }}>
               <div className={styles.settingsContainer}>
-                <Text variant="header-1">Настройки</Text>
+                <Text variant="header-1" tabIndex="0" aria-label="Настройки модели">Настройки</Text>
 
                 {/* Группа 1: Карта высот */}
-                <div className={styles.settingsGroup}>
-                  <Text variant="subheader-2">Карта высот</Text>
-                  <Text variant="body-2" color="secondary">
+                <div className={styles.settingsGroup} role="group" aria-labelledby="height-map-params">
+                  <Text variant="subheader-2" id="height-map-params" tabIndex="0">Карта высот</Text>
+                  <Text variant="body-2" color="secondary" tabIndex="0">
                     Карта высот определяет форму рельефа на пластине. Более светлые области соответствуют более высоким точкам.
                   </Text>
-                  <Link href="/depth-map" view="normal">
+                  <Link href="/depth-map" view="normal" aria-label="Подробнее о картах высот">
                     Подробнее о картах высот
                   </Link>
                   <ModelConfiguratorClient
@@ -201,15 +201,19 @@ const ModelConfigurator = () => {
 
                 {/* Группа 2: Настройки изображения */}
                 {file && (
-                  <div className={styles.settingsGroup}>
-                    <Text variant="subheader-2">Настройки изображения</Text>
+                  <div className={styles.settingsGroup} role="group" aria-labelledby="image-settings">
+                    <Text variant="subheader-2" id="image-settings" tabIndex="0">Настройки изображения</Text>
                     <div className={styles.switchContainer}>
                       <div>
                         <Tooltip content="Инвертирует карту высот, меняя местами высокие и низкие точки. Полезно, если рельеф получился обратным желаемому.">
-                          <Text variant="body-2">Инвертировать изображение</Text>
+                          <Text variant="body-2" tabIndex="0">Инвертировать изображение</Text>
                         </Tooltip>
                       </div>
-                      <Switch checked={isInverted} onUpdate={setIsInverted} />
+                      <Switch 
+                        checked={isInverted} 
+                        onUpdate={setIsInverted}
+                        aria-label="Инвертировать изображение"
+                      />
                     </div>
                     <div className={styles.switchContainer}>
                       <div>
@@ -253,8 +257,8 @@ const ModelConfigurator = () => {
                 )}
 
                 {/* Группа 3: Основные параметры модели */}
-                <div className={styles.settingsGroup}>
-                  <Text variant="subheader-2">Основные параметры</Text>
+                <div className={styles.settingsGroup} role="group" aria-labelledby="model-params">
+                  <Text variant="subheader-2" id="model-params" tabIndex="0">Параметры модели</Text>
                   <Tooltip content="Ширина пластины в миллиметрах. Высота будет рассчитана автоматически с сохранением пропорций изображения.">
                     <NumberInput
                       label="Ширина пластины (мм):"
@@ -298,15 +302,19 @@ const ModelConfigurator = () => {
                 </div>
 
                 {/* Группа 4: Настройки визуализации */}
-                <div className={styles.settingsGroup}>
-                  <Text variant="subheader-2">Настройки визуализации</Text>
+                <div className={styles.settingsGroup} role="group" aria-labelledby="visualization-settings">
+                  <Text variant="subheader-2" id="visualization-settings" tabIndex="0">Настройки визуализации</Text>
                   <div className={styles.switchContainer}>
                     <div>
                       <Tooltip content="Отображает модель в виде сетки, что помогает лучше понять структуру рельефа и оценить качество модели.">
-                        <Text variant="body-2">Показать сетку</Text>
+                        <Text variant="body-2" tabIndex="0">Показать сетку</Text>
                       </Tooltip>
                     </div>
-                    <Switch checked={isWireframe} onUpdate={setIsWireframe} />
+                    <Switch 
+                      checked={isWireframe} 
+                      onUpdate={setIsWireframe}
+                      aria-label="Показать сетку"
+                    />
                   </div>
                   <div className={styles.sliderContainer}>
                     <Tooltip content="Определяет детализацию модели. Более высокое разрешение даёт более плавный рельеф, но увеличивает время обработки и размер файла. Рекомендуется использовать значение от 100 до 256 для оптимального баланса между качеством и производительностью.">
@@ -325,8 +333,14 @@ const ModelConfigurator = () => {
 
                 <div className={styles.exportButton}>
                   <Tooltip content="Экспортирует модель в формате STL, который можно использовать для 3D-печати или дальнейшего редактирования в программах для работы с 3D.">
-                    <Button size="xl" view="action" width="max" onClick={exportSTL}>
-                      Экспорт 3D-модели
+                    <Button
+                      view="action"
+                      size="l"
+                      onClick={exportSTL}
+                      className={styles.exportButton}
+                      aria-label="Экспорт модели в формате STL"
+                    >
+                      Экспорт STL
                     </Button>
                   </Tooltip>
                 </div>

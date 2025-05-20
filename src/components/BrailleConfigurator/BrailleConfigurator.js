@@ -37,7 +37,7 @@ const BrailleConfigurator = () => {
 
   return (
     <>
-      <Text variant="display-1" style={{ padding: '0px'}}>Конфигуратор шрифта Брайля</Text>
+      <Text variant="display-1" style={{ padding: '0px'}} aria-label="Конфигуратор шрифта Брайля" tabIndex="0">Конфигуратор шрифта Брайля</Text>
       <div className={styles.container}>
         <Row space="2">
           <Col s="8" space="2">
@@ -75,8 +75,8 @@ const BrailleConfigurator = () => {
                 </div>
 
                 {/* Группа 2: Основные параметры модели */}
-                <div className={styles.settingsGroup}>
-                  <Text variant="subheader-2">Основные параметры</Text>
+                <div className={styles.settingsGroup} role="group" aria-labelledby="basic-params">
+                  <Text variant="subheader-2" id="basic-params" tabIndex="0">Основные параметры</Text>
                   <Tooltip content="Ширина пластины в миллиметрах. Определяет общую ширину модели.">
                     <NumberInput
                       label="Ширина (мм):"
@@ -85,6 +85,7 @@ const BrailleConfigurator = () => {
                       max={3000}
                       value={width || ''}
                       onUpdate={(value) => setWidth(value || 1)}
+                      aria-label="Ширина пластины в миллиметрах"
                     />
                   </Tooltip>
                   <Tooltip content="Высота пластины в миллиметрах. Определяет общую высоту модели.">
@@ -110,8 +111,8 @@ const BrailleConfigurator = () => {
                 </div>
 
                 {/* Группа 3: Позиционирование */}
-                <div className={styles.settingsGroup}>
-                  <Text variant="subheader-2">Позиционирование</Text>
+                <div className={styles.settingsGroup} role="group" aria-labelledby="positioning-params">
+                  <Text variant="subheader-2" id="positioning-params" tabIndex="0">Позиционирование</Text>
                   <Text variant="body-2" color="secondary">
                     Настройте положение текста на пластине с помощью отступов.
                   </Text>
@@ -138,8 +139,8 @@ const BrailleConfigurator = () => {
                 </div>
 
                 {/* Группа 4: Настройки визуализации */}
-                <div className={styles.settingsGroup}>
-                  <Text variant="subheader-2">Настройки визуализации</Text>
+                <div className={styles.settingsGroup} role="group" aria-labelledby="visualization-params">
+                  <Text variant="subheader-2" id="visualization-params" tabIndex="0">Настройки визуализации</Text>
                   <div className={styles.switchContainer}>
                     <div>
                       <Tooltip content="Отображает модель в виде сетки, что помогает лучше понять структуру текста и оценить качество модели.">
@@ -165,7 +166,13 @@ const BrailleConfigurator = () => {
 
                 <div className={styles.exportButton}>
                   <Tooltip content="Экспортирует модель в формате STL, который можно использовать для 3D-печати или дальнейшего редактирования в программах для работы с 3D.">
-                    <Button size="xl" view="action" width="max" onClick={exportSTL}>
+                    <Button
+                      size="xl"
+                      view="action"
+                      width="max"
+                      onClick={exportSTL}
+                      aria-label="Экспорт модели в формате STL"
+                    >
                       Экспорт 3D-модели
                     </Button>
                   </Tooltip>
