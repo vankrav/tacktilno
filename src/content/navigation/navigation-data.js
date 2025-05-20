@@ -27,7 +27,7 @@ const navigation = {
         icon: BulbIcon,
         text: 'База знаний',
         type: 'link',
-        url: 'https://example.com',
+        url: '/',
       },
     ],
     rightItems: [
@@ -35,7 +35,7 @@ const navigation = {
         text: 'Обратная связь',
         theme: 'action',
         type: 'button',
-        url: 'https://example.com',
+        url: '/',
       },
     ],
   },
