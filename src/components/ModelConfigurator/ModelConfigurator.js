@@ -335,7 +335,7 @@ const ModelConfigurator = () => {
                   <Tooltip content="Экспортирует модель в формате STL, который можно использовать для 3D-печати или дальнейшего редактирования в программах для работы с 3D.">
                     <Button
                       view="action"
-                      size="l"
+                      size="xl"
                       onClick={exportSTL}
                       className={styles.exportButton}
                       aria-label="Экспорт модели в формате STL"
