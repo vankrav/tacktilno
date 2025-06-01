@@ -2,12 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { pipeline, env } from '@xenova/transformers';
-import { Button } from '@gravity-ui/uikit';
-import { Icon } from '@gravity-ui/uikit';
+import { Button, Icon, Switch, Slider, Text, Spin } from '@gravity-ui/uikit';
 import { MagicWand, ArrowShapeDownToLine } from '@gravity-ui/icons';
-import { Switch } from '@gravity-ui/uikit';
-import { Slider } from '@gravity-ui/uikit';
-import { Text } from '@gravity-ui/uikit';
 import styles from './ModelConfigurator.module.scss';
 
 // Настройка путей для загрузки моделей
@@ -160,12 +156,12 @@ const ModelConfiguratorClient = ({
         >
           {isProcessing ? (
             <>
-              <div className={styles.spinner} />
+              <Spin size="s" className={styles.spinnerIcon} />
               Обработка изображения...
             </>
           ) : modelLoading ? (
             <>
-              <div className={styles.spinner} />
+              <Spin size="s" className={styles.spinnerIcon} />
               Загрузка модели...
             </>
           ) : (

@@ -135,20 +135,16 @@ export const useModelConfigurator = containerRef => {
       newWidth = Math.round((imgBitmap.width * 512) / imgBitmap.height);
     }
 
-    // Добавляем 10 пикселей для рамки
-    canvas.width = newWidth + 10;
-    canvas.height = newHeight + 10;
+    // Устанавливаем размеры канваса равными размерам изображения
+    canvas.width = newWidth;
+    canvas.height = newHeight;
     const ctx = canvas.getContext('2d');
 
-    // Заполняем весь канвас черным цветом
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Рисуем масштабированное изображение с отступом 5 пикселей
-    ctx.drawImage(imgBitmap, 5, 5, newWidth, newHeight);
+    // Рисуем масштабированное изображение
+    ctx.drawImage(imgBitmap, 0, 0, newWidth, newHeight);
 
     // Применяем кривые и инверс
-    const imageData = ctx.getImageData(5, 5, newWidth, newHeight);
+    const imageData = ctx.getImageData(0, 0, newWidth, newHeight);
     const data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
       let r = data[i];
@@ -184,7 +180,7 @@ export const useModelConfigurator = containerRef => {
         data[i + 2] = b;
       }
     }
-    ctx.putImageData(imageData, 5, 5);
+    ctx.putImageData(imageData, 0, 0);
 
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
@@ -218,19 +214,84 @@ export const useModelConfigurator = containerRef => {
       }
     }
 
+    // Добавляем точки основы для соединения с рельефом
+    const basePoints = [];
+    // Нижний край
+    for (let i = 0; i < cols; i++) {
+      const x = (i / (cols - 1) - 0.5) * width;
+      const y = -(0 - 0.5) * depth;
+      basePoints.push(x, y, -plateThickness / 2);
+    }
+    // Верхний край
+    for (let i = 0; i < cols; i++) {
+      const x = (i / (cols - 1) - 0.5) * width;
+      const y = -(1 - 0.5) * depth;
+      basePoints.push(x, y, -plateThickness / 2);
+    }
+    // Левый край
+    for (let j = 0; j < rows; j++) {
+      const x = (0 - 0.5) * width;
+      const y = -(j / (rows - 1) - 0.5) * depth;
+      basePoints.push(x, y, -plateThickness / 2);
+    }
+    // Правый край
+    for (let j = 0; j < rows; j++) {
+      const x = (1 - 0.5) * width;
+      const y = -(j / (rows - 1) - 0.5) * depth;
+      basePoints.push(x, y, -plateThickness / 2);
+    }
+
+    // Добавляем точки основы в основной массив позиций
+    const baseStartIndex = positions.length / 3;
+    positions.push(...basePoints);
+
+    // Создаем индексы для основного рельефа
     for (let j = 0; j < rows - 1; j++) {
       for (let i = 0; i < cols - 1; i++) {
         const a = j * cols + i;
         const b = j * cols + i + 1;
         const c = (j + 1) * cols + i;
         const d = (j + 1) * cols + i + 1;
-        // Проверяем, что все индексы валидны
         if (a >= 0 && b >= 0 && c >= 0 && d >= 0 &&
             a < positions.length / 3 && b < positions.length / 3 &&
             c < positions.length / 3 && d < positions.length / 3) {
           indices.push(a, b, d, a, d, c);
         }
       }
+    }
+
+    // Добавляем треугольники для соединения рельефа с основой
+    // Нижний край
+    for (let i = 0; i < cols - 1; i++) {
+      const reliefPoint1 = i;
+      const reliefPoint2 = i + 1;
+      const basePoint1 = baseStartIndex + i;
+      const basePoint2 = baseStartIndex + i + 1;
+      indices.push(reliefPoint1, basePoint1, basePoint2, reliefPoint1, basePoint2, reliefPoint2);
+    }
+    // Верхний край
+    for (let i = 0; i < cols - 1; i++) {
+      const reliefPoint1 = (rows - 1) * cols + i;
+      const reliefPoint2 = (rows - 1) * cols + i + 1;
+      const basePoint1 = baseStartIndex + cols + i;
+      const basePoint2 = baseStartIndex + cols + i + 1;
+      indices.push(reliefPoint1, reliefPoint2, basePoint2, reliefPoint1, basePoint2, basePoint1);
+    }
+    // Левый край
+    for (let j = 0; j < rows - 1; j++) {
+      const reliefPoint1 = j * cols;
+      const reliefPoint2 = (j + 1) * cols;
+      const basePoint1 = baseStartIndex + 2 * cols + j;
+      const basePoint2 = baseStartIndex + 2 * cols + j + 1;
+      indices.push(reliefPoint1, basePoint1, basePoint2, reliefPoint1, basePoint2, reliefPoint2);
+    }
+    // Правый край
+    for (let j = 0; j < rows - 1; j++) {
+      const reliefPoint1 = j * cols + cols - 1;
+      const reliefPoint2 = (j + 1) * cols + cols - 1;
+      const basePoint1 = baseStartIndex + 2 * cols + rows + j;
+      const basePoint2 = baseStartIndex + 2 * cols + rows + j + 1;
+      indices.push(reliefPoint1, reliefPoint2, basePoint2, reliefPoint1, basePoint2, basePoint1);
     }
 
     const reliefGeo = new THREE.BufferGeometry();
